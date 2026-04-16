@@ -74,6 +74,7 @@ They provide runnable v0 tooling (local-first, dev signatures, no privileged aut
 - tick orchestrator: `d82c372c8cf466090f0d998274c47f134622e99f`
 - systemd tick service (initial): `5488e613915f362221aac3e7a8052b31fbc0b964`
 - systemd tick service (path/hardening fix): `c89eb038e96b29b47567c3b9eb1341c5195f80cf`
+- Truth Plane smoke harness: `de7b1467fb1dd186dea1f783ff1236228b1355ad`
 
 ---
 
@@ -89,6 +90,7 @@ They provide runnable v0 tooling (local-first, dev signatures, no privileged aut
 - Emit DeltaSurface between the last two TruthSurfaces
 - Emit incident.freeze event object
 - Initialize replay cache and record dry-run egress grants (no nft mutation yet)
+- Run a full smoke harness locally (ts0 → ts1 → Δ → incident.freeze)
 
 ---
 
