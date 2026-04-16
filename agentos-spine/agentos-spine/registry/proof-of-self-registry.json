@@ -1,0 +1,14 @@
+{
+  "name": "sourceos-proof-of-self",
+  "role": "identity_plane_runtime",
+  "canonicalSpecRepo": "SourceOS-Linux/sourceos-spec",
+  "substrateRepo": "SociOS-Linux/SourceOS",
+  "integrationRepo": "SociOS-Linux/agentos-spine",
+  "conformanceRepo": "SociOS-Linux/workstation-contracts",
+  "optionalCommonsRepo": "SociOS-Linux/socios",
+  "swappableBoundaries": [
+    "mesh transport",
+    "trust root catalog sync",
+    "liveness evaluation backend"
+  ]
+}
