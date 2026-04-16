@@ -63,7 +63,7 @@ Canonical docs:
 ## 2) Substrate v0 implementation commits (post-PR, direct commits)
 
 These commits landed on `SociOS-Linux/SourceOS/main` after the enforcement plan merged.
-They provide runnable v0 tooling (local-first, dev signatures, no privileged automation yet).
+They provide runnable v0 tooling (local-first, dev signatures, minimal privilege).
 
 - TruthSurface emitter: `5b04639ad762c754e9fffecb683aef8d4f4e2542`
 - DeltaSurface emitter: `8ba144366acca47768d152ef64bfdb4f9a612ac8`
@@ -71,6 +71,7 @@ They provide runnable v0 tooling (local-first, dev signatures, no privileged aut
 - nft default-deny egress baseline: `007834685a69bdfcc32a3d9a4bcd1834d770f962`
 - egress gate skeleton + replay cache: `4bd982f68e20d2b5ca011dae83261ec1dac7fc22`
 - truth-plane runbook: `65e10e266b2eb142f51cd735af88f65e312c189c`
+- tools package marker (enables intra-tools imports): `cbfa88b18c8f50990b74086020717b8ddc4de9d4`
 - tick orchestrator: `d82c372c8cf466090f0d998274c47f134622e99f`
 - systemd tick service (initial): `5488e613915f362221aac3e7a8052b31fbc0b964`
 - systemd tick service (path/hardening fix): `c89eb038e96b29b47567c3b9eb1341c5195f80cf`
@@ -89,15 +90,20 @@ They provide runnable v0 tooling (local-first, dev signatures, no privileged aut
 - Emit TruthSurface (system.sealed)
 - Emit DeltaSurface between the last two TruthSurfaces
 - Emit incident.freeze event object
-- Initialize replay cache and record dry-run egress grants (no nft mutation yet)
+- Initialize replay cache and record egress grants
 - Run a full smoke harness locally (ts0 → ts1 → Δ → incident.freeze)
+
+### C) Scheduling note
+
+- A hardened `sourceos-truth-plane-tick.service` exists (periodic work unit).
+- A `*.timer` is intentionally treated as **deployment-lane material** until packaging/policy review is complete.
 
 ---
 
 ## 4) Explicit non-goals (still pending)
 
 - Real signing backend (TPM/HSM/SSHsig) for TruthSurface/DeltaSurface.
-- Privileged nftables integration (apply/remove allow rules) inside the gate.
+- Fully privileged nftables integration (apply/remove allow rules) inside the gate (v0 begins with controlled, explicit apply).
 - Fork/Kill incident automation (Freeze is currently event-only in code).
 - Runtime truth depth (thread clustering, namespace transition detection).
 
