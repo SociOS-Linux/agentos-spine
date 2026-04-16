@@ -1,0 +1,4 @@
+[[repos]]
+name = "sourceos_proof_of_self"
+role = "identity_plane_runtime"
+local_path = "spine/sourceos-proof-of-self"
