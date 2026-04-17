@@ -1,0 +1,14 @@
+# Placeholder values for a local-LVM / TopoLVM lane assembled by agentos-spine.
+# This is intentionally minimal until the substrate + ignition lanes settle exact defaults.
+
+topolvm:
+  enabled: true
+  mode: storage-capacity-tracking
+  lvmd:
+    vgName: vg_fog
+  storageClass:
+    name: local-lvm
+    isDefaultClass: false
+    volumeBindingMode: WaitForFirstConsumer
+    allowVolumeExpansion: true
+    reclaimPolicy: Delete
