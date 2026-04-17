@@ -1,0 +1,15 @@
+# Placeholder values for Fog topic replication and Fog compute workers.
+# These values are scaffolds only; exact image pins should come from the opt-in catalog layer.
+
+fogAgents:
+  replicator:
+    enabled: true
+    image: ghcr.io/socioprophet/fog-replicator:dev
+    mountRoot: /srv/fog
+    topicsPath: /srv/fog/topics
+  computeWorker:
+    enabled: true
+    image: ghcr.io/socioprophet/fog-worker:dev
+    mountRoot: /srv/fog
+    receiptsTopic: urn:srcos:topic:fog-receipts
+    offersTopic: urn:srcos:topic:fog-offers
