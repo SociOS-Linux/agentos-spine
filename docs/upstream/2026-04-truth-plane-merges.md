@@ -15,17 +15,25 @@ Goal: provide a single, human-readable reference that answers:
 
 ### A) SourceOS-Linux/sourceos-spec (contracts + API/event spine)
 
-1. PR #17 — ADR-0001 (TruthSurface B¹¹ + DeltaSurface Δ + incident semantics)
+1. PR #17 — initial Truth Plane ADR work (historical; superseded)
    - merge commit: `17335dd9b0b48e75f1803333147f6d8bbb78577e`
+   - note: Truth Plane ADR numbering was later canonicalized to ADR-0009 to eliminate ADR number collisions.
    - https://github.com/SourceOS-Linux/sourceos-spec/pull/17
 
-2. PR #18 — incident schema + truth/delta examples
+2. PR #18 — incident schema + truth/delta examples (historical example naming)
    - merge commit: `f51801818f2ed4c1341326105239bfd4ec4561ff`
+   - note: truth/delta example filenames were later canonicalized to snake_case in PR #35.
    - https://github.com/SourceOS-Linux/sourceos-spec/pull/18
 
 3. PR #27 — truth-plane OpenAPI/AsyncAPI patch files
    - merge commit: `42e166dd14a152f4594aa2fcd2b520d582608d5c`
    - https://github.com/SourceOS-Linux/sourceos-spec/pull/27
+
+4. PR #35 — spec hygiene: canonicalize Truth Plane ADR + examples + schema IDs
+   - merge commit: `258139e16e4a611b0440927b26c93baaf525fcc9`
+   - canonical ADR: `docs/adr/0009-truth-surfaces-b11-delta.md`
+   - canonical examples: `examples/truth_surface.json`, `examples/delta_surface.json`
+   - https://github.com/SourceOS-Linux/sourceos-spec/pull/35
 
 Canonical files to reference after these merges:
 
@@ -34,17 +42,22 @@ Canonical files to reference after these merges:
 - `schemas/control-plane/incident-events.schema.json`
 - `openapi.truth-plane.patch.yaml`
 - `asyncapi.truth-plane.patch.yaml`
+- `docs/adr/0009-truth-surfaces-b11-delta.md`
+- `docs/adr/0009-truth-surfaces-b11-delta-appendix-a-reuse-map.md`
+- `examples/truth_surface.json`
+- `examples/delta_surface.json`
 
 ### B) SociOS-Linux/workstation-contracts (portable conformance)
 
 1. PR #3 — Truth Plane fixtures validator (requires local sourceos-spec checkout)
    - merge commit: `1bd6c2a280fe219069f8df7cea3cae6c2ac8e080`
+   - note: fixture filenames were later canonicalized to snake_case to match sourceos-spec.
    - https://github.com/SociOS-Linux/workstation-contracts/pull/3
 
 Canonical conformance artifacts:
 
 - `tools/validate_sourceos_truth_plane.py`
-- `fixtures/sourceos-spec/examples/{truth-surface.sample.json,delta-surface.sample.json}`
+- `fixtures/sourceos-spec/examples/{truth_surface.json,delta_surface.json}`
 - `conformance/good/truth-plane-fixtures.json`
 
 ### C) SociOS-Linux/SourceOS (substrate enforcement plan)
