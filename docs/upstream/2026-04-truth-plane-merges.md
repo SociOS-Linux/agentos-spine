@@ -52,6 +52,17 @@ Goal: provide a single, human-readable reference that answers:
    - adds `scripts/check_duplicate_schema_ids.py` and wires it into `.github/workflows/validate.yml`
    - https://github.com/SourceOS-Linux/sourceos-spec/pull/40
 
+8. PR #41 — ci(validate): preload control-plane schemas + validate canonical wrapper $id resolution
+   - merge commit: `d88db4688ea712883db91c4e9453a5f8fd99b7cf`
+   - preloads `schemas/control-plane/*.json` and `schemas/control-plane/*.schema.json` for example validation
+   - adds `scripts/validate_control_plane_wrapper_ids.py` guardrail (wrapper id resolution)
+   - https://github.com/SourceOS-Linux/sourceos-spec/pull/41
+
+9. PR #42 — ci(validate): extend wrapper $id resolution test to multiple control-plane wrappers
+   - merge commit: `b84bf08d7512c25ead0f23986858b5d06a75ecdd`
+   - validates wrapper ids and internal $refs for: IncidentEvent, MeshSkill, EnrollmentToken, SkillExecutionEvent
+   - https://github.com/SourceOS-Linux/sourceos-spec/pull/42
+
 Canonical files to reference after these merges:
 
 Truth Plane:
@@ -71,6 +82,11 @@ Control-plane identity model:
 - legacy imports: `schemas/control-plane/*.schema.json` (legacy $id)
 - canonical IncidentEvent: `schemas/control-plane/IncidentEvent.json`
 - legacy IncidentEvent schema: `schemas/control-plane/incident-events.schema.json`
+
+CI guardrails:
+
+- `scripts/check_duplicate_schema_ids.py`
+- `scripts/validate_control_plane_wrapper_ids.py`
 
 ### B) SociOS-Linux/workstation-contracts (portable conformance)
 
