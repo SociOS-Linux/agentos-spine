@@ -35,17 +35,42 @@ Goal: provide a single, human-readable reference that answers:
    - canonical examples: `examples/truth_surface.json`, `examples/delta_surface.json`
    - https://github.com/SourceOS-Linux/sourceos-spec/pull/35
 
+5. PR #38 — control-plane: canonical srcos $id wrappers for legacy schemas
+   - merge commit: `62b56ea26677f09d963a734c672f40e53d450a19`
+   - establishes two-layer schema identity model in `schemas/control-plane/README.md`
+   - canonical wrapper schemas under `schemas/control-plane/*.json`
+   - https://github.com/SourceOS-Linux/sourceos-spec/pull/38
+
+6. PR #39 — spec hygiene: eliminate duplicate IncidentEvent $id + reference canonical wrapper
+   - merge commit: `ab92673037cce99f82bbf4ca645e1a6d86e214d4`
+   - IncidentEvent canonical identity is `schemas/control-plane/IncidentEvent.json`
+   - OpenAPI truth-plane patch now references the canonical wrapper
+   - https://github.com/SourceOS-Linux/sourceos-spec/pull/39
+
+7. PR #40 — ci(validate): guardrail against duplicate schema $id values
+   - merge commit: `a13fbbc91bad1cb3f12e6a4ce6d4dc41a401f8bd`
+   - adds `scripts/check_duplicate_schema_ids.py` and wires it into `.github/workflows/validate.yml`
+   - https://github.com/SourceOS-Linux/sourceos-spec/pull/40
+
 Canonical files to reference after these merges:
+
+Truth Plane:
 
 - `schemas/TruthSurface.json`
 - `schemas/DeltaSurface.json`
-- `schemas/control-plane/incident-events.schema.json`
 - `openapi.truth-plane.patch.yaml`
 - `asyncapi.truth-plane.patch.yaml`
 - `docs/adr/0009-truth-surfaces-b11-delta.md`
 - `docs/adr/0009-truth-surfaces-b11-delta-appendix-a-reuse-map.md`
 - `examples/truth_surface.json`
 - `examples/delta_surface.json`
+
+Control-plane identity model:
+
+- canonical wrappers: `schemas/control-plane/*.json` (srcos $id)
+- legacy imports: `schemas/control-plane/*.schema.json` (legacy $id)
+- canonical IncidentEvent: `schemas/control-plane/IncidentEvent.json`
+- legacy IncidentEvent schema: `schemas/control-plane/incident-events.schema.json`
 
 ### B) SociOS-Linux/workstation-contracts (portable conformance)
 
