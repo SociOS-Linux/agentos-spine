@@ -1,15 +1,19 @@
-# Placeholder values for Fog topic replication and Fog compute workers.
-# These values are scaffolds only; exact image pins should come from the opt-in catalog layer.
+# Fog topic-replication + compute-worker assembly values, assembled by agentos-spine and
+# referenced from agentos-spine/agentos-spine/manifest/workspace.fog.toml.
+# imageRef entries are logical references; the resolved, digest-pinned image is supplied by
+# the opt-in catalog layer (see SociOS-Linux/socios catalog publication authority) — this
+# repo assembles the topology, it does not pin digests or hold registry credentials.
+# mountRoot (/srv/fog) is the directory contract materialized by the ignition lane.
 
 fogAgents:
   replicator:
     enabled: true
-    image: ghcr.io/socioprophet/fog-replicator:dev
+    imageRef: urn:srcos:catalog:image:fog-replicator
     mountRoot: /srv/fog
     topicsPath: /srv/fog/topics
   computeWorker:
     enabled: true
-    image: ghcr.io/socioprophet/fog-worker:dev
+    imageRef: urn:srcos:catalog:image:fog-worker
     mountRoot: /srv/fog
     receiptsTopic: urn:srcos:topic:fog-receipts
     offersTopic: urn:srcos:topic:fog-offers

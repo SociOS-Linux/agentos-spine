@@ -1,63 +1,74 @@
 # Fog Runtime Assembly in agentos-spine
 
-This document captures the intended **assembly/integration role** of `agentos-spine` for the Fog layer.
+`agentos-spine` is where the Fog layer's independently-owned pieces are **assembled** into a
+working Linux-side runtime topology. It assembles; it does not redefine contracts, substrate
+invariants, first-boot logic, or conformance policy.
 
-The Fog layer is split across multiple repos by design:
-- contracts in `SourceOS-Linux/sourceos-spec`
-- substrate positioning in `SociOS-Linux/SourceOS`
-- first-boot realization in `SociOS-Linux/socios-ignition`
-- conformance in `SociOS-Linux/workstation-contracts`
+## Canonical location
 
-`agentos-spine` is where those pieces are assembled into a working Linux-side runtime topology.
+The fog-capable-lane workspace descriptor lives in the repo's canonical integration layout
+alongside the main workspace manifest:
 
-## What belongs in this repo
+- **`agentos-spine/agentos-spine/manifest/workspace.fog.toml`**
 
-### 1. Workspace assembly
+It mirrors `workspace.toml`'s format (same runner tooling), declares the assembly assets, the
+upstream lanes consumed, the runtime adjacency, and the workstation/cluster lane variants.
 
-This repo should define how the fog-capable workspace is composed, including references to:
-- substrate lanes
-- contract packages
-- runtime agents
-- deployment manifests
-- evidence and policy surfaces
+## Assembly assets (in this repo)
 
-### 2. Runtime graph / adjacency
+| Asset | File | Role |
+|-------|------|------|
+| Local storage | `fog/manifests/topolvm-values.yaml` | local-lvm / TopoLVM storage class over `vg_fog` |
+| Fog agents | `fog/manifests/fog-agents.values.yaml` | topic replicator + compute worker over `/srv/fog` |
 
-This repo is the right place to show how the fog runtime connects:
-- local storage substrate
-- topic replication agent(s)
-- compute worker agent(s)
-- optional CSI / Kubernetes deployment artifacts
-- optional bridge adapters (e.g. external compute market interfaces)
+## Consumed upstream lanes (referenced, never redefined)
 
-### 3. Deployment/integration manifests
+| Lane | Repo | Reference |
+|------|------|-----------|
+| Contract | `SociOS-Linux/workstation-contracts` | `contracts/fog-node.contract.json` |
+| Conformance | `SociOS-Linux/workstation-contracts` | `tools/check_fog_node.py` + `fog-node.check-receipt.v0` (`make validate-fog-node`) |
+| Ignition (first boot) | `SociOS-Linux/socios-ignition` | `profiles/fog/fog-node.bu` (enabled `lvm-bootstrap` + `fog-dirs` units, `/srv/fog` contract) |
+| Substrate | `SociOS-Linux/sourceos-build` | `schemas/sourceos/build-request.v0.1.schema.json` (BuildRequest/BuildReceipt) |
+| Canonical schemas | `SourceOS-Linux/sourceos-spec` | referenced only — canonical authority stays there |
 
-Future assembly artifacts in this repo may include:
-- Kubernetes manifests or Helm values for local-storage + fog agents
-- workspace manifests / lockfiles describing required components
-- runtime topology notes for workstation vs cluster lanes
+## Runtime adjacency
 
-### 4. Boundary preservation
+```
+vg_fog (ignition) ──▶ local-lvm storage class (topolvm-values) ──▶ /srv/fog mount
+                                                                       │
+                                          fog replicator ◀────────────┘
+                                              │ urn:srcos:topic:fog-offers
+                                              ▼
+                                          fog compute worker ──▶ urn:srcos:topic:fog-receipts
+```
 
-This repo should **assemble** the system without collapsing boundaries:
-- do not redefine schemas that belong in `sourceos-spec`
-- do not move substrate invariants out of `SourceOS`
-- do not move first-boot logic out of `socios-ignition`
-- do not move conformance policy out of `workstation-contracts`
+## Lane variants — dependencies & acceptance
 
-## Candidate assembled components
+### Workstation lane (single node, Podman-backed Agent Machine)
 
-A future fog assembly in this repo will likely reference or stage:
-- local LVM-backed storage readiness
-- local CSI/LVM manifests (e.g. TopoLVM lane)
-- Hypercore topic replication worker
-- FogCompute worker and receipt emitter
-- bridge adapters for external settlement/market interfaces
+- **Requires:** local LVM `vg_fog` (provisioned by the ignition lane), a container host
+  (podman/docker), and the `/srv/fog` directory contract materialized at first boot.
+- **Storage:** `local-lvm`, `WaitForFirstConsumer`.
+- **Acceptance:** `workstation-contracts` `make check-fog-node-host` passes on the node and the
+  emitted `fog-node.check-receipt.v0` shows `passed: true`.
 
-## Expected follow-up
+### Cluster lane (multi-node, TopoLVM CSI + Kubernetes)
 
-Future PRs here should add:
-1. workspace / manifest references for fog-capable lanes
-2. deployment manifests for local-storage + fog agents
-3. runtime dependency graph notes
-4. integration acceptance criteria tying together spec, substrate, ignition, and conformance
+- **Requires:** the TopoLVM CSI installed, `vg_fog` on each fog-capable node, and a namespace
+  for the fog agents.
+- **Storage:** the `topolvm` `local-lvm` storage class from `topolvm-values.yaml`.
+- **Acceptance:** `topolvm-values` + `fog-agents.values` apply cleanly and the
+  `urn:srcos:topic:fog-receipts` topic is reachable with receipts emitted.
+
+## Boundary preservation
+
+This repo **assembles** without collapsing boundaries:
+
+- schemas that belong in `sourceos-spec` are referenced, not redefined;
+- substrate invariants stay in the substrate lane;
+- first-boot logic stays in `socios-ignition`;
+- conformance policy stays in `workstation-contracts`.
+
+Image digests are **not** pinned here: `fog-agents.values.yaml` carries logical `imageRef`
+URNs that the opt-in catalog layer resolves to digest-pinned images. This repo holds no
+registry credentials and no secrets.

@@ -1,5 +1,9 @@
-# Placeholder values for a local-LVM / TopoLVM lane assembled by agentos-spine.
-# This is intentionally minimal until the substrate + ignition lanes settle exact defaults.
+# Local-LVM / TopoLVM assembly values for the fog storage substrate, assembled by
+# agentos-spine and referenced from agentos-spine/agentos-spine/manifest/workspace.fog.toml.
+# The vg_fog volume group is provisioned by the ignition lane (socios-ignition
+# profiles/fog/fog-node.bu, lvm-bootstrap.service); these values assemble the CSI /
+# storage-class layer on top of it. Cluster lane uses the TopoLVM CSI; the workstation
+# lane uses the same vg_fog directly.
 
 topolvm:
   enabled: true
