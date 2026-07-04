@@ -1,0 +1,94 @@
+# Fog-capable-lane workspace descriptor for agentos-spine.
+#
+# Canonical integration layout: this file sits alongside workspace.toml and mirrors
+# its format so the same runner tooling composes it. It ASSEMBLES the fog runtime
+# (local storage + fog agents) and declares the upstream lanes this repo CONSUMES.
+# It does not redefine contracts, substrate invariants, first-boot logic, or
+# conformance policy — those stay in their owning repos.
+
+[fog_workspace]
+name = "agentos-spine-fog"
+version = "0.1"
+mount_root = "/srv/fog"
+
+# --- assembly assets managed in this repo -----------------------------------
+
+[[assets]]
+name = "local_storage"
+kind = "helm_values"
+path = "fog/manifests/topolvm-values.yaml"
+role = "local_storage_substrate"
+
+[[assets]]
+name = "fog_agents"
+kind = "helm_values"
+path = "fog/manifests/fog-agents.values.yaml"
+role = "runtime_agents"
+
+# --- upstream lanes this repo consumes (does NOT redefine) ------------------
+
+[[consumes]]
+lane = "contract"
+repo = "SociOS-Linux/workstation-contracts"
+ref = "contracts/fog-node.contract.json"
+note = "fog-node conformance contract: required /srv/fog paths, storage (LVM), runtime (container host), metering"
+
+[[consumes]]
+lane = "conformance"
+repo = "SociOS-Linux/workstation-contracts"
+ref = "tools/check_fog_node.py"
+note = "runnable conformance lane + fog-node.check-receipt.v0 evidence (make validate-fog-node / check-fog-node-host)"
+
+[[consumes]]
+lane = "ignition"
+repo = "SociOS-Linux/socios-ignition"
+ref = "profiles/fog/fog-node.bu"
+note = "first-boot realization: enabled lvm-bootstrap + fog-dirs units materializing the /srv/fog directory contract"
+
+[[consumes]]
+lane = "substrate"
+repo = "SociOS-Linux/sourceos-build"
+ref = "schemas/sourceos/build-request.v0.1.schema.json"
+note = "build substrate: BuildRequest/BuildReceipt schemas that drive artifact assembly (socios drives, this repo assembles)"
+
+[[consumes]]
+lane = "contract-spec"
+repo = "SourceOS-Linux/sourceos-spec"
+ref = "(canonical schema authority)"
+note = "SourceOS canonical schemas remain here; agentos-spine references, never redefines them"
+
+# --- runtime adjacency (topology) -------------------------------------------
+
+[[adjacency]]
+from = "local_storage"
+to = "fog_agents"
+via = "/srv/fog"
+note = "the local-lvm storage class backs the /srv/fog mount the replicator and compute worker consume"
+
+[[adjacency]]
+from = "fog_agents.replicator"
+to = "fog_agents.compute_worker"
+via = "urn:srcos:topic:fog-offers"
+note = "topic replication feeds the compute worker; the worker emits urn:srcos:topic:fog-receipts"
+
+# --- lane variants (workstation vs cluster) ---------------------------------
+
+[lanes.workstation]
+description = "single-node workstation fog lane on a Podman-backed Agent Machine"
+requires = [
+  "local LVM volume group vg_fog (from the ignition lane)",
+  "a container host (podman or docker)",
+  "the /srv/fog directory contract materialized at first boot",
+]
+storage = "local-lvm, WaitForFirstConsumer"
+acceptance = "workstation-contracts `make check-fog-node-host` passes on the node; fog-node.check-receipt.v0 shows passed=true"
+
+[lanes.cluster]
+description = "multi-node cluster fog lane using the TopoLVM CSI"
+requires = [
+  "TopoLVM CSI installed on the cluster",
+  "vg_fog present on each fog-capable node",
+  "a namespace for the fog agents",
+]
+storage = "topolvm local-lvm storage class (topolvm-values.yaml)"
+acceptance = "topolvm-values + fog-agents.values apply cleanly; the fog-receipts topic is reachable and receipts are emitted"
