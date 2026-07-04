@@ -1,0 +1,99 @@
+schemaVersion: "0.1"
+capturedAt: "2026-04-15"
+captureMode: "public-visible-updated-slice"
+scope: "minimal-core"
+notes:
+  - "Minimal initial seed; expand after review."
+  - "source-os vs SourceOS remains explicitly unresolved."
+
+repos:
+  - id: socioprophet/socioprophet
+    org: SocioProphet
+    repo: socioprophet
+    role: public-hub
+    category: website
+    spaces: [docs, governance, control]
+    websiteSurface: socioprophet.com
+    canonical: true
+    sourceType: internal-git
+    updatedPublic: "2026-04-15"
+    status: active
+    notes: "Canonical public hub and docs shell."
+
+  - id: socioprophet/agentplane
+    org: SocioProphet
+    repo: agentplane
+    role: execution-control-plane
+    category: runtime
+    spaces: [control, agent]
+    websiteSurface: socioprophet.com
+    canonical: true
+    sourceType: internal-git
+    updatedPublic: "2026-04-15"
+    status: active
+    notes: "Bundle→validate→run→evidence→replay control plane."
+
+  - id: socios-linux/agentos-spine
+    org: SociOS-Linux
+    repo: agentos-spine
+    role: ecosystem-catalog
+    category: governance
+    spaces: [system, user, agent, twin, docs]
+    websiteSurface: socios-linux.org
+    canonical: true
+    sourceType: internal-git
+    updatedPublic: "2026-04-14"
+    status: active
+    notes: "Integration spine / ecosystem catalog / migration control plane."
+
+  - id: socios-linux/SourceOS
+    org: SociOS-Linux
+    repo: SourceOS
+    role: substrate
+    category: os-spec
+    spaces: [system]
+    websiteSurface: socios-linux.org
+    canonical: unresolved
+    sourceType: internal-git
+    updatedPublic: "2026-04-15"
+    status: unresolved-topology
+    notes: "Public substrate repo. Must be reconciled with source-os."
+
+  - id: socios-linux/source-os
+    org: SociOS-Linux
+    repo: source-os
+    role: substrate
+    category: os-build
+    spaces: [system]
+    websiteSurface: socios-linux.org
+    canonical: unresolved
+    sourceType: internal-git
+    updatedPublic: "2026-04-15"
+    status: unresolved-topology
+    notes: "Publicly described as main SourceOS repo. Must be reconciled with SourceOS."
+
+  - id: socios-linux/socios
+    org: SociOS-Linux
+    repo: socios
+    role: opt-in-automation-commons
+    category: automation
+    spaces: [agent, governance]
+    websiteSurface: socios.dev
+    canonical: true
+    sourceType: internal-git
+    updatedPublic: "2026-04-09"
+    status: active
+    notes: "OFF by default; never a substrate dependency."
+
+  - id: sourceos-linux/sourceos-spec
+    org: SourceOS-Linux
+    repo: sourceos-spec
+    role: canonical-typed-contracts
+    category: spec
+    spaces: [system, governance]
+    websiteSurface: socios-linux.org
+    canonical: true
+    sourceType: internal-git
+    updatedPublic: "2026-04-15"
+    status: active
+    notes: "Canonical typed contracts, vocabulary, and policy objects."
